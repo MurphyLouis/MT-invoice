@@ -124,6 +124,9 @@
 
 <script>
 import {mapMutations} from 'vuex';
+import db from "../firebase/firebaseInit";
+import {mapMutations} from 'vuex';
+import {uid} from 'uid';
 export default {
     name:"invoiceModal",
     data(){
@@ -160,6 +163,76 @@ export default {
         ...mapMutations(["TOGGLE_INVOICE"]),
         closeInvoice(){
             this.TOGGLE_INVOICE();
+        },
+        addNewInvoiceItem(){
+            this.invoiceItemList.push({
+                id: uid(),
+                itemName:"",
+                quantity: "",
+                price: 0,
+                total: 0,
+            });
+        },
+
+        deleteInvoiceItem(id){
+            this.invoiceItemList= this.invoiceItemList.filter((item)=>item.id !== id);
+        },
+
+        calInvoiceTotal(){
+            this.invoiceTotal= 0;
+            this.invoiceItemList.forEach((item)=>{
+                this.invoice += item.total;
+            });
+        },
+
+        publishInvoice(){
+            this.invoicePending = true ;
+        },
+
+        saveDraft(){
+            this.invoiceDraft= true;   
+        },
+
+        async uploadInvoice(){
+             if(this.invoiceItemList.length<=0){
+                 alert('Please fill out this item before submission!');
+                 return;
+             }
+
+            this.calInvoiceTotal();
+
+            const dataBase = db.collection("invoices").doc();
+
+            await dataBase.set({
+                invoiceId: uid(6),
+                billerStreetAddress: this.billerStreetAddress,
+                billerCity: this.billerCity,
+                billerZipCope: this.billerZipCope,
+                billerCountry:this.billerCountry,
+                clientName:this.clientName,
+                clientEmail: this.clientEmail,
+                clientStreetAddress: this.clientStreetAddress,
+                clientCity: this.clientCity,
+                clientZipCode: this.clientZipCode,
+                clientCountry:this.clientCountry,
+                invoiceDate: this.invoiceDate,
+                invoiceDateUnix:this.invoiceDateUnix,
+                paymentTerms: this.paymentTerms,
+                paymentDueDate:this.paymentDueDate,
+                paymentDueDateUnix: this.paymentDueDateUnix,
+                productDescription:this.productDescription,
+                invoiceItemList:this.invoiceItemList,
+                invoiceTotal:this.invoiceTotal,
+                invoicePending:this.invoicePending,
+                invoiceDraft: this.invoiceDraft,
+                invoicePaid:null,
+            })
+
+            this.TOGGLE_INVOICE();
+        },
+
+        submitForm(){
+            this.uploadInvoice();
         },
     },
     watch:{
