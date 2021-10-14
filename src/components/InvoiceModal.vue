@@ -1,6 +1,9 @@
 <template>
 <div @click="checkClick" ref="invoiceWrap" class="invoice-wrap flex flex-column">
     <form @submit.prevent="submitForm" class="invoice-content">
+
+        <Loading v-show="loading"/> <!--Setting the loading animation-->
+
         <h1>New Invoice</h1>
 
         <!--Billing from-->
@@ -111,11 +114,11 @@
 
         <div class="save flex">
             <div class="left">
-                <button @click="closeInvoice" class="red">Cancel</button>
+                <button type="button"  @click="closeInvoice" class="red">Cancel</button>
             </div>
             <div class="right flex">
-                <button @click="saveDraft" class="dark-purple">Save Draft</button>
-                <button @click="publishInvoice" class="purple">Create Invoice</button>
+                <button type="submit" @click="saveDraft" class="dark-purple">Save Draft</button>
+                <button type="submit"  @click="publishInvoice" class="purple">Create Invoice</button>
             </div>
         </div>
     </form>
@@ -124,14 +127,15 @@
 
 <script>
 import {mapMutations} from 'vuex';
+import Loading from "../components/Loading.vue"
 import db from "../firebase/firebaseInit";
-import {mapMutations} from 'vuex';
 import {uid} from 'uid';
 export default {
     name:"invoiceModal",
     data(){
         return{
             dateOptions:{year:"numeric", month:"short", day:"numeric"},
+            loading: null,
             billerStreetAddress: null ,
             billerCity: null,
             billerZipCope: null,
@@ -154,13 +158,24 @@ export default {
             invoiceTotal:0,
         }
     },
+
+    components: {
+        Loading,
+    },
     created(){
         //get current Date fro invoice date field 
         this.invoiceDateUnix=Date.now();
         this.invoiceDate= new Date(this.invoiceDateUnix).toLocaleDateString('en-us', this.dateOptions);
     },
     methods:{
-        ...mapMutations(["TOGGLE_INVOICE"]),
+        ...mapMutations(["TOGGLE_INVOICE", "TOGGLE_MODAL"]),
+
+        checkClick(e){
+            if(e.target===this.$refs.invoiceWrap){
+                this.TOGGLE_MODAL();
+            }
+        },
+
         closeInvoice(){
             this.TOGGLE_INVOICE();
         },
@@ -181,7 +196,7 @@ export default {
         calInvoiceTotal(){
             this.invoiceTotal= 0;
             this.invoiceItemList.forEach((item)=>{
-                this.invoice += item.total;
+                this.invoiceTotal += item.total;
             });
         },
 
@@ -198,6 +213,8 @@ export default {
                  alert('Please fill out this item before submission!');
                  return;
              }
+
+             this.loading= true;
 
             this.calInvoiceTotal();
 
@@ -227,6 +244,8 @@ export default {
                 invoiceDraft: this.invoiceDraft,
                 invoicePaid:null,
             })
+
+            this.loading= false;
 
             this.TOGGLE_INVOICE();
         },
