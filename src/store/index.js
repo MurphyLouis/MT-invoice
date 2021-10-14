@@ -1,4 +1,5 @@
 import { createStore } from 'vuex'
+<<<<<<< HEAD
 import db from "../firebase/firebaseInit"
 
 export default createStore({
@@ -8,10 +9,17 @@ export default createStore({
     modalActive: null,
     invoicesLoaded: null,
     currentInvoiceArray: null,
+=======
+
+export default createStore({
+  state: {
+    invoiceModal: null,
+>>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
   },
   mutations: {
     TOGGLE_INVOICE(state) {
       state.invoiceModal = !state.invoiceModal;
+<<<<<<< HEAD
     },
     TOGGLE_MODAL(state) {
       state.modalActive = !state.modalActive;
@@ -64,6 +72,11 @@ export default createStore({
       });
       commit('INVOICES_LOADED')
     }
+=======
+    }
+  },
+  actions: {
+>>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
   },
   modules: {
   }

@@ -1,9 +1,12 @@
 <template>
 <div @click="checkClick" ref="invoiceWrap" class="invoice-wrap flex flex-column">
     <form @submit.prevent="submitForm" class="invoice-content">
+<<<<<<< HEAD
 
         <Loading v-show="loading"/> <!--Setting the loading animation-->
 
+=======
+>>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
         <h1>New Invoice</h1>
 
         <!--Billing from-->
@@ -114,11 +117,19 @@
 
         <div class="save flex">
             <div class="left">
+<<<<<<< HEAD
                 <button type="button"  @click="closeInvoice" class="red">Cancel</button>
             </div>
             <div class="right flex">
                 <button type="submit" @click="saveDraft" class="dark-purple">Save Draft</button>
                 <button type="submit"  @click="publishInvoice" class="purple">Create Invoice</button>
+=======
+                <button @click="closeInvoice" class="red">Cancel</button>
+            </div>
+            <div class="right flex">
+                <button @click="saveDraft" class="dark-purple">Save Draft</button>
+                <button @click="publishInvoice" class="purple">Create Invoice</button>
+>>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
             </div>
         </div>
     </form>
@@ -126,16 +137,24 @@
 </template>
 
 <script>
+<<<<<<< HEAD
 import {mapMutations} from 'vuex';
 import Loading from "../components/Loading.vue"
 import db from "../firebase/firebaseInit";
+=======
+import db from "../firebase/firebaseInit";
+import {mapMutations} from 'vuex';
+>>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
 import {uid} from 'uid';
 export default {
     name:"invoiceModal",
     data(){
         return{
             dateOptions:{year:"numeric", month:"short", day:"numeric"},
+<<<<<<< HEAD
             loading: null,
+=======
+>>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
             billerStreetAddress: null ,
             billerCity: null,
             billerZipCope: null,
@@ -158,16 +177,20 @@ export default {
             invoiceTotal:0,
         }
     },
+<<<<<<< HEAD
 
     components: {
         Loading,
     },
+=======
+>>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
     created(){
         //get current Date fro invoice date field 
         this.invoiceDateUnix=Date.now();
         this.invoiceDate= new Date(this.invoiceDateUnix).toLocaleDateString('en-us', this.dateOptions);
     },
     methods:{
+<<<<<<< HEAD
         ...mapMutations(["TOGGLE_INVOICE", "TOGGLE_MODAL"]),
 
         checkClick(e){
@@ -176,6 +199,9 @@ export default {
             }
         },
 
+=======
+        ...mapMutations(["TOGGLE_INVOICE"]),
+>>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
         closeInvoice(){
             this.TOGGLE_INVOICE();
         },
@@ -196,7 +222,11 @@ export default {
         calInvoiceTotal(){
             this.invoiceTotal= 0;
             this.invoiceItemList.forEach((item)=>{
+<<<<<<< HEAD
                 this.invoiceTotal += item.total;
+=======
+                this.invoice += item.total;
+>>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
             });
         },
 
@@ -214,8 +244,11 @@ export default {
                  return;
              }
 
+<<<<<<< HEAD
              this.loading= true;
 
+=======
+>>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
             this.calInvoiceTotal();
 
             const dataBase = db.collection("invoices").doc();
@@ -245,8 +278,11 @@ export default {
                 invoicePaid:null,
             })
 
+<<<<<<< HEAD
             this.loading= false;
 
+=======
+>>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
             this.TOGGLE_INVOICE();
         },
 

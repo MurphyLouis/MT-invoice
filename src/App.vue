@@ -1,9 +1,16 @@
 <template>
+<<<<<<< HEAD
   <div v-if="invoicesLoaded">
     <div v-if="!mobile" class="app flex flex-column">
       <Navigation/>
       <div class="app-content flex flex-column">
         <Modal v-if="modalActive"/>
+=======
+  <div>
+    <div v-if="!mobile" class="app flex flex-column">
+      <Navigation/>
+      <div class="app-content flex flex-column">
+>>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
         <transition name="invoice">
           <InvoiceModal v-if="invoiceModal"/>
         </transition>
@@ -19,8 +26,12 @@
 </template>
 
 <script>
+<<<<<<< HEAD
 import {mapState, mapActions} from 'vuex'
 import Modal from "./components/Modal.vue"
+=======
+import {mapState} from 'vuex'
+>>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
 import Navigation from "./components/Navigation";
 import InvoiceModal from "./components/InvoiceModal";
 export default {
@@ -32,18 +43,26 @@ export default {
   components:{
     Navigation,
     InvoiceModal,
+<<<<<<< HEAD
     Modal,
   },
   created(){
     this.GET_INVOICES();
+=======
+  },
+  created(){
+>>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
     this.checkScreen();
     window.addEventListener("resize", this.checkScreen);
   },
   methods:{
+<<<<<<< HEAD
 
     ...mapActions(["GET_INVOICES"]),
 
 
+=======
+>>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
 //setting the screensize and displaying mobile-message on screen less than 750 px
     checkScreen(){
       const windowWidth= window.innerWidth;
@@ -55,7 +74,11 @@ export default {
     }
   },
   computed:{
+<<<<<<< HEAD
     ...mapState(["invoiceModal", "modalActive", "invoicesLoaded"])
+=======
+    ...mapState(["invoiceModal"])
+>>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
   }
 };
 </script>

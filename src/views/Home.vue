@@ -25,6 +25,7 @@
         </div>
       </div>
     </div>
+<<<<<<< HEAD
     <!--invoices-->
     <div v-if="invoiceData.length>0">
       <Invoice v-for="(invoice, index) in invoiceData" :invoice="invoice" :key="index" />
@@ -36,12 +37,18 @@
         Create a new invoice by clinking the<h4>New Invoice button</h4>
       </span>
     </div>
+=======
+>>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
   </div>
 </template>
 
 <script>
+<<<<<<< HEAD
 import Invoice from "../components/Invoice"
 import {mapMutations, mapState} from "vuex"
+=======
+import {mapMutations} from "vuex"
+>>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
 export default {
   name: "Home",
   data(){
@@ -49,9 +56,13 @@ export default {
       filterMenu:null,
     }
   },
+<<<<<<< HEAD
   components: {
     Invoice,
   },
+=======
+  components: {},
+>>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
   methods:{
     ...mapMutations(["TOGGLE_INVOICE"]),
     newInvoice(){
@@ -62,9 +73,12 @@ export default {
       this.filterMenu=!this.filterMenu;
     },
   },
+<<<<<<< HEAD
   computed:{
     ...mapState(["invoiceData"]),
   }
+=======
+>>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
 };
 </script>
 
@@ -145,6 +159,7 @@ export default {
     }
   }
  }
+<<<<<<< HEAD
 
  .empty{
    margin-top: 160px;
@@ -168,5 +183,7 @@ export default {
      margin-top: 16px;
    }
  }
+=======
+>>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
 }
 </style>
