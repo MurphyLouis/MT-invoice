@@ -1,5 +1,4 @@
 import { createStore } from 'vuex'
-<<<<<<< HEAD
 import db from "../firebase/firebaseInit"
 
 export default createStore({
@@ -9,17 +8,11 @@ export default createStore({
     modalActive: null,
     invoicesLoaded: null,
     currentInvoiceArray: null,
-=======
-
-export default createStore({
-  state: {
-    invoiceModal: null,
->>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
+    editInvoice:null,
   },
   mutations: {
     TOGGLE_INVOICE(state) {
       state.invoiceModal = !state.invoiceModal;
-<<<<<<< HEAD
     },
     TOGGLE_MODAL(state) {
       state.modalActive = !state.modalActive;
@@ -35,6 +28,29 @@ export default createStore({
         return invoice.invoiceId === payload;
       });
     },
+    TOGGLE_EDIT_INVOICE(state) {
+      state.editInvoice = !state.editInvoice;
+    },
+    DELETE_INVOICE(state,payload) {
+      state.invoiceData=state.invoiceData.filter(invoice=>invoice.docId!==payload)
+    },
+    UPDATE_STATUS_TO_PAID(state, payload) {
+      state.invoiceData.forEach((invoice) => {
+        if (invoice.docId === payload) {
+          invoice.invoicePaid = true;
+          invoice.invoicePending = false;
+        }
+      });
+    },
+    UPDATE_STATUS_TO_PENDING(state, payload) {
+      state.invoiceData.forEach((invoice) => {
+        if (invoice.docId === payload) {
+          invoice.invoicePaid = false;
+          invoice.invoicePending = true;
+          invoice.invoiceDraft = false;
+        }
+      });
+    },
   },
   actions: {
     async GET_INVOICES({ commit, state }) {
@@ -47,7 +63,7 @@ export default createStore({
             invoiceId: doc.data().invoiceId,
             billerStreetAddress: doc.data().billerStreetAddress,
             billerCity: doc.data().billerCity,
-            billerZipCope: doc.data().billerZipCope,
+            billerZipCode: doc.data().billerZipCode,
             billerCountry: doc.data().billerCountry,
             clientName: doc.data().clientName,
             clientEmail: doc.data().clientEmail,
@@ -71,13 +87,40 @@ export default createStore({
         }
       });
       commit('INVOICES_LOADED')
-    }
-=======
-    }
-  },
-  actions: {
->>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
+    },
+
+    async UPDATE_INVOICE({commit, dispatch},{docId, routeId}) {
+      commit("DELETE_INVOICE", docId);
+      await dispatch("GET_INVOICES");
+      commit("TOGGLE_INVOICE");
+      commit("TOGGLE_EDIT_INVOICE");
+      commit("SET_CURRENT_INVOICE", routeId);
+    },
+
+    async DELETE_INVOICE({ commit }, docId) {
+      const getInvoice = db.collection('invoices').doc(docId);
+      await getInvoice.delete();
+      commit("DELETE_INVOICE", docId);
+    },
+
+    async UPDATE_STATUS_TO_PAID({ commit }, docId) {
+      const getInvoice = db.collection("invoices").doc(docId);
+      await getInvoice.update({
+        invoicePaid: true,
+        invoicePending: false,
+      });
+      commit("UPDATE_STATUS_TO_PAID", docId);
+    },
+    async UPDATE_STATUS_TO_PENDING({ commit }, docId) {
+      const getInvoice = db.collection("invoices").doc(docId);
+      await getInvoice.update({
+        invoicePaid: false,
+        invoicePending: true,
+        invoiceDraft:false,
+      });
+      commit("UPDATE_STATUS_TO_PENDING", docId);
+    },
   },
   modules: {
-  }
+  },
 })

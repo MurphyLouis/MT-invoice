@@ -1,13 +1,11 @@
 <template>
 <div @click="checkClick" ref="invoiceWrap" class="invoice-wrap flex flex-column">
     <form @submit.prevent="submitForm" class="invoice-content">
-<<<<<<< HEAD
 
         <Loading v-show="loading"/> <!--Setting the loading animation-->
 
-=======
->>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
-        <h1>New Invoice</h1>
+        <h1 v-if="!editInvoice">New Invoice</h1>
+        <h1 v-else>Edit Invoice</h1>
 
         <!--Billing from-->
 
@@ -23,8 +21,8 @@
                     <input required type="text" id="billerCity" v-model="billerCity"/>
                 </div>
                 <div class="input flex flex-column">
-                    <label for="billerZipCope">Zip Code</label>
-                    <input required type="text" id="billerZipCope" v-model="billerZipCope"/>
+                    <label for="billerZipCode">Zip Code</label>
+                    <input required type="text" id="billerZipCode" v-model="billerZipCode"/>
                 </div>
                 <div class="input flex flex-column">
                     <label for="billerCountry">Country</label>
@@ -117,19 +115,12 @@
 
         <div class="save flex">
             <div class="left">
-<<<<<<< HEAD
                 <button type="button"  @click="closeInvoice" class="red">Cancel</button>
             </div>
             <div class="right flex">
-                <button type="submit" @click="saveDraft" class="dark-purple">Save Draft</button>
-                <button type="submit"  @click="publishInvoice" class="purple">Create Invoice</button>
-=======
-                <button @click="closeInvoice" class="red">Cancel</button>
-            </div>
-            <div class="right flex">
-                <button @click="saveDraft" class="dark-purple">Save Draft</button>
-                <button @click="publishInvoice" class="purple">Create Invoice</button>
->>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
+                <button v-if="!editInvoice" type="submit" @click="saveDraft" class="dark-purple">Save Draft</button>
+                <button v-if="!editInvoice" type="submit"  @click="publishInvoice" class="purple">Create Invoice</button>
+                <button v-if="editInvoice" type="submit"   class="purple">Update Invoice</button>
             </div>
         </div>
     </form>
@@ -137,27 +128,20 @@
 </template>
 
 <script>
-<<<<<<< HEAD
-import {mapMutations} from 'vuex';
+import {mapActions, mapMutations, mapState} from 'vuex';
 import Loading from "../components/Loading.vue"
 import db from "../firebase/firebaseInit";
-=======
-import db from "../firebase/firebaseInit";
-import {mapMutations} from 'vuex';
->>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
 import {uid} from 'uid';
 export default {
     name:"invoiceModal",
     data(){
         return{
             dateOptions:{year:"numeric", month:"short", day:"numeric"},
-<<<<<<< HEAD
+            docId:null,
             loading: null,
-=======
->>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
             billerStreetAddress: null ,
             billerCity: null,
-            billerZipCope: null,
+            billerZipCode: null,
             billerCountry:null,
             clientName:null,
             clientEmail: null,
@@ -177,21 +161,45 @@ export default {
             invoiceTotal:0,
         }
     },
-<<<<<<< HEAD
 
     components: {
         Loading,
     },
-=======
->>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
     created(){
         //get current Date fro invoice date field 
+        if(!this.editInvoice){
         this.invoiceDateUnix=Date.now();
         this.invoiceDate= new Date(this.invoiceDateUnix).toLocaleDateString('en-us', this.dateOptions);
+        }
+
+        if(this.editInvoice){
+            const currentInvoice= this.currentInvoiceArray[0];
+            this.docId=currentInvoice.docId;
+            this.billerStreetAddress=currentInvoice.billerStreetAddress;
+            this.billerCity=currentInvoice.billerCity;
+            this.billerZipCode=currentInvoice.billerZipCode;
+            this.billerCountry=currentInvoice.billerCountry;
+            this.clientName=currentInvoice.clientName;
+            this.clientEmail=currentInvoice.clientEmail;
+            this.clientStreetAddress=currentInvoice.clientStreetAddress;
+            this.clientCity=currentInvoice.clientCity;
+            this.clientZipCode=currentInvoice.clientZipCode;
+            this.clientCountry=currentInvoice.clientCountry;
+            this.invoiceDateUnix=currentInvoice.invoiceDateUnix;
+            this.invoiceDate=currentInvoice.invoiceDate;
+            this.paymentTerms=currentInvoice.paymentTerms;
+            this.paymentDueDateUnix=currentInvoice.paymentDueDateUnix;
+            this.paymentDueDate=currentInvoice.paymentDueDate;
+            this.productDescription=currentInvoice.productDescription;
+            this.invoicePending=currentInvoice.invoicePending;
+            this.invoiceDraft=currentInvoice.invoiceDraft;
+            this.invoiceItemList=currentInvoice.invoiceItemList;
+            this.invoiceTotal=currentInvoice.invoiceTotal;
+        }
     },
     methods:{
-<<<<<<< HEAD
-        ...mapMutations(["TOGGLE_INVOICE", "TOGGLE_MODAL"]),
+        ...mapMutations(["TOGGLE_INVOICE", "TOGGLE_MODAL","TOGGLE_EDIT_INVOICE"]),
+        ...mapActions(["UPDATE_INVOICE", "GET_INVOICES"]),
 
         checkClick(e){
             if(e.target===this.$refs.invoiceWrap){
@@ -199,11 +207,11 @@ export default {
             }
         },
 
-=======
-        ...mapMutations(["TOGGLE_INVOICE"]),
->>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
         closeInvoice(){
             this.TOGGLE_INVOICE();
+            if(this.editInvoice){
+                this.TOGGLE_EDIT_INVOICE();
+            }
         },
         addNewInvoiceItem(){
             this.invoiceItemList.push({
@@ -222,11 +230,7 @@ export default {
         calInvoiceTotal(){
             this.invoiceTotal= 0;
             this.invoiceItemList.forEach((item)=>{
-<<<<<<< HEAD
                 this.invoiceTotal += item.total;
-=======
-                this.invoice += item.total;
->>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
             });
         },
 
@@ -244,11 +248,8 @@ export default {
                  return;
              }
 
-<<<<<<< HEAD
              this.loading= true;
 
-=======
->>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
             this.calInvoiceTotal();
 
             const dataBase = db.collection("invoices").doc();
@@ -257,7 +258,7 @@ export default {
                 invoiceId: uid(6),
                 billerStreetAddress: this.billerStreetAddress,
                 billerCity: this.billerCity,
-                billerZipCope: this.billerZipCope,
+                billerZipCode: this.billerZipCode,
                 billerCountry:this.billerCountry,
                 clientName:this.clientName,
                 clientEmail: this.clientEmail,
@@ -278,17 +279,64 @@ export default {
                 invoicePaid:null,
             })
 
-<<<<<<< HEAD
             this.loading= false;
 
-=======
->>>>>>> b23f3e5dc70d12857bde67920fe0874a9b71f2ac
             this.TOGGLE_INVOICE();
+
+            this.GET_INVOICES();
+        },
+        // botton from the edit invoice
+        async updateInvoice(){
+             if(this.invoiceItemList.length<=0){
+                 alert('Please fill out this item before submission!');
+                 return;
+             }
+
+             this.loading= true;
+
+            this.calInvoiceTotal();
+
+            const dataBase = db.collection("invoices").doc(this.docId);
+
+            await dataBase.update({
+                billerStreetAddress: this.billerStreetAddress,
+                billerCity: this.billerCity,
+                billerZipCode: this.billerZipCode,
+                billerCountry:this.billerCountry,
+                clientName:this.clientName,
+                clientEmail: this.clientEmail,
+                clientStreetAddress: this.clientStreetAddress,
+                clientCity: this.clientCity,
+                clientZipCode: this.clientZipCode,
+                clientCountry:this.clientCountry,
+                paymentTerms: this.paymentTerms,
+                paymentDueDate:this.paymentDueDate,
+                paymentDueDateUnix: this.paymentDueDateUnix,
+                productDescription:this.productDescription,
+                invoiceItemList:this.invoiceItemList,
+                invoiceTotal:this.invoiceTotal,
+            })
+
+            this.loading= false;
+
+            const data={
+                docId:this.docId,
+                routeId:this.$route.params.invoiceId,
+            };
+
+            this.UPDATE_INVOICE(data);
         },
 
         submitForm(){
+            if(this.editInvoice){
+                this.updateInvoice();
+                return;
+            }
             this.uploadInvoice();
         },
+    },
+    computed:{
+        ...mapState(["editInvoice", "currentInvoiceArray"]),
     },
     watch:{
         paymentTerms(){
